@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.Locale;
 
 import net.iharder.Base64;
 
@@ -72,90 +73,104 @@ class ServerThread extends Thread {
 
 			Thread.sleep(2000); // delay a bit to simulate slow ichip
 
+			Locale.setDefault(Locale.US);
+			
 			int i = 0;
 			while (socket != null) {
 				String dashboard = new String("{\r"
-						+ String.format("\"timeRunning\": \"%s\",", new Date().toString().substring(11, 19))
-//						+ String.format("\"systemState\": %d.", (i < 90 ? (i / 10 + 1) : 99)) +
-						+ String.format("\"systemState\": %d,", (i < 90 ? 8 : 5))
-//						+ String.format("\"bitfieldMotor\": %.0f,", (i + Math.random()) * 0x28F5C28)
-//						+ String.format("\"bitfieldBms\": %.0f,", (i + Math.random()) * 0x28F5C28)
-//						+ String.format("\"bitfieldIO\": %.0f,", (i + Math.random()) * 0x28F5C28)
-						+ String.format("\"enableRegen\": %s,", ((i / 10) % 2 == 0 ? "true" : "false"))
-						+ String.format("\"enableHeater\": %s,", ((i / 20) % 2 == 0 ? "true" : "false"))
-						+ String.format("\"enableCreep\": %s,", ((i / 5) % 2 == 0 ? "true" : "false"))
-						+ String.format("\"powerSteering\": %s,", (((i + 3) / 10) % 2 == 0 ? "true" : "false"))
-						+ String.format("\"throttle\": %.0f,", (-100 + Math.random() * 200))
-//						+ String.format("\"brake\": 0.0,") +
-//						+ String.format("\"gear\": 0,") +
-//						+ String.format("\"torqueRequested\": %d,", i) +
-						+ String.format("\"torqueActual\": %.0f,", (-220 + Math.random() * 440))
-						+ String.format("\"speedActual\": %d,", i * 90)
-						+ String.format("\"dcVoltage\": %.4f,", (i * 2.2f + 220))
-						+ String.format("\"dcCurrent\": %f,", (i * 5.5f - 275))
-//						+ String.format("\"mechanicalPower\": %d,", (i * 2.5f - 125))
-						+ String.format("\"temperatureMotor\": %f,", i * 1.5f)
-						+ String.format("\"temperatureController\": %d,", i)
+						+ String.format("\"timeRunning\": \"%s\"", new Date().toString().substring(11, 19))
+//						+ String.format(",\"systemState\": %d", (i < 90 ? (i / 10 + 1) : 99)) +
+						+ String.format(",\"systemState\": %d", (i < 90 ? 8 : 5))
+						+ String.format(",\"enableRegen\": %s", ((i / 10) % 2 == 0 ? "true" : "false"))
+						+ String.format(",\"enableHeater\": %s", ((i / 20) % 2 == 0 ? "true" : "false"))
+						+ String.format(",\"enableCreep\": %s", ((i / 5) % 2 == 0 ? "true" : "false"))
+						+ String.format(",\"powerSteering\": %s", (((i + 3) / 10) % 2 == 0 ? "true" : "false"))
+						+ String.format(",\"throttle\": %.0f", (-100 + Math.random() * 200))
+//						+ String.format(",\"brake\": 0.0,") +
+//						+ String.format(",\"gear\": 0,") +
+//						+ String.format(",\"torqueRequested\": %d", i) +
+						+ String.format(",\"torqueActual\": %.0f", (-220 + Math.random() * 440))
+						+ String.format(",\"speedActual\": %d", i * 90)
+						+ String.format(",\"dcVoltage\": %.4f", (i * 2.2f + 220))
+						+ String.format(",\"dcCurrent\": %f", (i * 5.5f - 275))
+//						+ String.format(",\"mechanicalPower\": %d", (i * 2.5f - 125))
+						+ String.format(",\"temperatureMotor\": %f", i * 1.5f)
+						+ String.format(",\"temperatureController\": %d", i)
 						
-						+ String.format("\"dcDcHvVoltage\": %.1f,", i * 2.2f + 221)
-						+ String.format("\"dcDcHvCurrent\": %.1f,", i / 25.0f)
-						+ String.format("\"dcDcLvVoltage\": %.0f,", i / 25.0f + 10)
-						+ String.format("\"dcDcLvCurrent\": %d,", (i * 2))
-						+ String.format("\"dcDcTemperature\": %.1f,", i / 2.0f + 20)
+						+ String.format(",\"dcDcHvVoltage\": %.1f", i * 2.2f + 221)
+						+ String.format(",\"dcDcHvCurrent\": %.1f", i / 25.0f)
+						+ String.format(",\"dcDcLvVoltage\": %.0f", i / 25.0f + 10)
+						+ String.format(",\"dcDcLvCurrent\": %d", (i * 2))
+						+ String.format(",\"dcDcTemperature\": %.1f", i / 2.0f + 20)
 						
-						+ String.format("\"chargeLevel\": %d,", i)
-						+ String.format("\"chargeHoursRemain\": %d,", 10 - i / 10)
-						+ String.format("\"chargeMinsRemain\": %.0f,", 59 - i * 0.6f)
-						+ String.format("\"chargerInputVoltage\": %.1f,", i * 0.8f + 180)
-						+ String.format("\"chargerInputCurrent\": %.1f,", i * 0.4)
-						+ String.format("\"chargerBatteryVoltage\": %.1f,", i * 2.3f + 240)
-						+ String.format("\"chargerBatteryCurrent\": %.1f,", i * 0.2f)
-						+ String.format("\"chargerTemperature\": %.1f,", i / 2.0f + 20)
+						+ String.format(",\"chargeLevel\": %d", i)
+						+ String.format(",\"chargeHoursRemain\": %d", 10 - i / 10)
+						+ String.format(",\"chargeMinsRemain\": %.0f", 59 - i * 0.6f)
+						+ String.format(",\"chargerInputVoltage\": %.1f", i * 0.8f + 180)
+						+ String.format(",\"chargerInputCurrent\": %.1f", i * 0.4)
+						+ String.format(",\"chargerBatteryVoltage\": %.1f", i * 2.3f + 240)
+						+ String.format(",\"chargerBatteryCurrent\": %.1f", i * 0.2f)
+						+ String.format(",\"chargerTemperature\": %.1f", i / 2.0f + 20)
 						
-						+ String.format("\"temperatureCoolant\": %d,", i)
-						+ String.format("\"temperatureHeater\": %d,", i)
-						+ String.format("\"heaterPower\": %d,", i * 60)
-						+ String.format("\"flowCoolant\": %.2f,", i / 25.0f + 10)
-						+ String.format("\"flowHeater\": %.2f,", i / 25.0f + 10)
-						+ String.format("\"temperatureBattery1\": %d,", i)
-						+ String.format("\"temperatureBattery2\": %d,", i + 1)
-						+ String.format("\"temperatureBattery3\": %d,", i + 2)
-						+ String.format("\"temperatureBattery4\": %d,", i + 3)
-						+ String.format("\"temperatureBattery5\": %d,", i + 4)
-						+ String.format("\"temperatureBattery6\": %d,", i + 5)
-						+ String.format("\"temperatureExterior\": %d,", i + 10)
+						+ String.format(",\"temperatureCoolant\": %d", i)
+						+ String.format(",\"temperatureHeater\": %d", i)
+						+ String.format(",\"heaterPower\": %d", i * 60)
+						+ String.format(",\"flowCoolant\": %.2f", i / 25.0f + 10)
+						+ String.format(",\"flowHeater\": %.2f", i / 25.0f + 10)
+						+ String.format(",\"temperatureBattery1\": %d", i)
+						+ String.format(",\"temperatureBattery2\": %d", i + 1)
+						+ String.format(",\"temperatureBattery3\": %d", i + 2)
+						+ String.format(",\"temperatureBattery4\": %d", i + 3)
+						+ String.format(",\"temperatureBattery5\": %d", i + 4)
+						+ String.format(",\"temperatureBattery6\": %d", i + 5)
+						+ String.format(",\"temperatureExterior\": %d", i + 10)
 						
-						+ String.format("\"packVoltage\": %.1f,", 380 + i / 10f)
-						+ String.format("\"packCurrent\": -%.1f,", 100 + i / 10f)
-						+ String.format("\"packResistance\": %.2f,", i / 5.0f)
-						+ String.format("\"packHealth\": %d,", i)
-						+ String.format("\"packCycles\": %d,", 1000 + i)
-						+ String.format("\"soc\": %d,", 100 - i)
-						+ String.format("\"dischargeLimit\": %d,", 240 - i)
-						+ String.format("\"chargeLimit\": %d,", 180 - i)
-						+ String.format("\"chargeAllowed\": %s,", ((i / 10) % 2 == 0 ? "true" : "false"))
-						+ String.format("\"dischargeAllowed\": %s,", ((i / 10) % 2 == 1 ? "true" : "false"))
-						+ String.format("\"lowestCellTemp\": %d,", i)
-						+ String.format("\"highestCellTemp\": %d,", i)
-						+ String.format("\"lowestCellVolts\": %.4f,", i / 30.0f)
-						+ String.format("\"highestCellVolts\": %.4f,", (100 - i) / 30.0f)
-						+ String.format("\"averageCellVolts\": %d,", i)
-						+ String.format("\"deltaCellVolts\": %.4f,", i / 99f)
-						+ String.format("\"lowestCellResistance\": %.2f,", i / 83f)
-						+ String.format("\"highestCellResistance\": %.2f,", i / 85f)
-						+ String.format("\"averageCellResistance\": %.2f,", i / 80f)
-						+ String.format("\"deltaCellResistance\": %.2f,", i / 800f)
-						+ String.format("\"lowestCellTempId\": %d,", i+75)
-						+ String.format("\"highestCellTempId\": %d,", i+100)
-						+ String.format("\"lowestCellVoltsId\": %d,", i+80)
-						+ String.format("\"highestCellVoltsId\": %d,", i+120)
-						+ String.format("\"lowestCellResistanceId\": %d,", i+90)
-						+ String.format("\"highestCellResistanceId\": %d,", i+150)
+						+ String.format(",\"packResistance\": %.2f", i / 5.0f)
+						+ String.format(",\"packHealth\": %d", i)
+						+ String.format(",\"packCycles\": %d", 1000 + i)
+						+ String.format(",\"soc\": %d", 100 - i)
+						+ String.format(",\"dischargeLimit\": %d", 240 - i)
+						+ String.format(",\"chargeLimit\": %d", 180 - i)
+						+ String.format(",\"chargeAllowed\": %s", ((i / 10) % 2 == 0 ? "true" : "false"))
+						+ String.format(",\"dischargeAllowed\": %s", ((i / 10) % 2 == 1 ? "true" : "false"))
+						+ String.format(",\"lowestCellTemp\": %d", i)
+						+ String.format(",\"highestCellTemp\": %d", i)
+						+ String.format(",\"lowestCellVolts\": %.4f", i / 30.0f)
+						+ String.format(",\"highestCellVolts\": %.4f", (100 - i) / 30.0f)
+						+ String.format(",\"averageCellVolts\": %d", i)
+						+ String.format(",\"deltaCellVolts\": %.4f", i / 99f)
+						+ String.format(",\"lowestCellResistance\": %.2f", i / 83f)
+						+ String.format(",\"highestCellResistance\": %.2f", i / 85f)
+						+ String.format(",\"averageCellResistance\": %.2f", i / 80f)
+						+ String.format(",\"deltaCellResistance\": %.2f", i / 800f)
+						+ String.format(",\"lowestCellTempId\": %d", i+75)
+						+ String.format(",\"highestCellTempId\": %d", i+100)
+						+ String.format(",\"lowestCellVoltsId\": %d", i+80)
+						+ String.format(",\"highestCellVoltsId\": %d", i+120)
+						+ String.format(",\"lowestCellResistanceId\": %d", i+90)
+						+ String.format(",\"highestCellResistanceId\": %d", i+150)
+						+ String.format(",\"bmsTemp\": %d", i)
+						+ String.format(",\"cruiseSpeed\": %d", i % 10)
 
-						+ "\"limits\": { \"dcCurrent\": { \"min\": " + (-240 + i) + ",\"max\": " + (240 - i) + "},"
-						+ "\"dcVoltage\": { \"min\": " + (270 + i) + ",\"max\": " + (450 - i) + "},"
-						+ "\"temperatureMotor\": { \"max\": " + (150 - i) + "},"
-						+ "\"temperatureController\": { \"max\": " + (100 - i) + "}}" + "}");
+						+ ",\"limits\": { \"dcCurrent\": { \"min\": " + (-260 + i) + ",\"max\": " + (260 - i) + "}"
+						+ ",\"dcVoltage\": { \"min\": " + (270 + i) + ",\"max\": " + (450 - i) + "}"
+						+ ",\"temperatureMotor\": { \"max\": " + (150 - i) + "}"
+						+ ",\"temperatureController\": { \"max\": " + (100 - i) + "}}");
+				
+				if (i < 30 && i > 10) {
+					dashboard += String.format(",\"bitfieldMotor\": %.0f", (i + Math.random()) * 0x28F5C28)
+					+ String.format(",\"bitfieldBms\": %.0f", (i + Math.random()) * 0x28F5C28)
+					+ String.format(",\"bitfieldIO\": %.0f", (i + Math.random()) * 0x28F5C28);
+				} else if (i == 40) {
+					dashboard += ",\"bitfieldIO\": 0";
+				}
+				else if (i == 50) {
+					dashboard += ",\"bitfieldMotor\": 0";
+				}
+				else if (i == 60) {
+					dashboard += ",\"bitfieldBms\": 0";
+				}
+				dashboard += "}";
 				sendData(outStream, dashboard);
 
 				if (i++ > 99) {
@@ -163,15 +178,15 @@ class ServerThread extends Thread {
 					// break;
 				}
 
-//				if (i == 30) {
-//					sendData(outStream, "{\r\"logMessage\": {\r\"level\": \"INFO\",\r\"message\": \"this is a notification message\"\r}\r}");
-//				}
-//				if (i == 60) {
-//					sendData(outStream, "{\r\"logMessage\": {\r\"level\": \"WARNING\",\r\"message\": \"warning: we're about to ...\"\r}\r}");
-//				}
-//				if (i == 90) {
+				if (i%30 == 0) {
+					sendData(outStream, "{\r\"logMessage\": {\r\"level\": \"INFO\",\r\"message\": \"this is a notification message\"\r}\r}");
+				}
+				if (i == 60) {
+					sendData(outStream, "{\r\"logMessage\": {\r\"level\": \"WARNING\",\r\"message\": \"warning: we're about to ...\"\r}\r}");
+				}
+				if (i == 90) {
 //					sendData(outStream, "{\r\"logMessage\": {\r\"level\": \"ERROR\",\r\"message\": \"error: your car no longer supports oil wars! ;)\"\r}\r}");
-//				}
+				}
 
 				if (is.available() != 0) {
 					int len = is.read(buf);
